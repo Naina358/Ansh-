@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hey ❤️</title>
+
+  <style>
+    body {
+      background: linear-gradient(to right, #ff758c, #ff7eb3);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      width: 320px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      position: relative;
+    }
+
+    h1, h2 {
+      color: #ff4d6d;
+    }
+
+    p {
+      font-size: 16px;
+    }
+
+    .buttons {
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #yesBtn {
+      background: #ff4d6d;
+      color: white;
+    }
+
+    #noBtn {
+      background: #ddd;
+      transition: all 0.3s ease;
+      position: absolute;
+    }
+
+    #reply {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #ff4d6d;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+    <h1>Hi 💖</h1>
+    <p>You make my days brighter and my smile wider.</p>
+    <h2>Will you be my Valentine? 🌹</h2>
+
+    <div class="buttons">
+      <button id="yesBtn" onclick="yes()">Yes 💕</button>
+      <button id="noBtn" onmouseover="moveButton()">No 🙈</button>
+    </div>
+
+    <p id="reply"></p>
+  </div>
+
+  <script>
+    function yes() {
+      document.getElementById("reply").innerHTML =
+        "Yayyy!! 💖 I knew it 😍 Happy Valentine’s Day 🥰";
+    }
+
+    function moveButton() {
+      const btn = document.getElementById("noBtn");
+
+      const maxX = window.innerWidth - btn.offsetWidth;
+      const maxY = window.innerHeight - btn.offsetHeight;
+
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
+
+      btn.style.left = x + "px";
+      btn.style.top = y + "px";
+    }
+  </script>
+
+</body>
+</html>
