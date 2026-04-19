@@ -1,104 +1,231 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Hey ❤️</title>
+  <title>🏏 BidBattle Auction</title>
 
   <style>
     body {
-      background: linear-gradient(to right, #ff758c, #ff7eb3);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: Arial, sans-serif;
-      overflow: hidden;
+      font-family: Arial;
+      background: linear-gradient(135deg, #1e1e2f, #2b5876);
+      color: white;
+      padding: 20px;
     }
 
-    .card {
-      background: white;
-      padding: 30px;
-      border-radius: 20px;
-      text-align: center;
-      width: 320px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-      position: relative;
-    }
-
-    h1, h2 {
-      color: #ff4d6d;
-    }
-
-    p {
-      font-size: 16px;
-    }
-
-    .buttons {
-      margin-top: 20px;
-    }
+    h1 { text-align:center; }
 
     button {
-      padding: 10px 20px;
-      margin: 10px;
+      padding: 10px;
+      margin: 10px 0;
+      background: #00c6ff;
       border: none;
-      border-radius: 25px;
-      font-size: 16px;
+      border-radius: 5px;
       cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
     }
 
-    #yesBtn {
-      background: #ff4d6d;
-      color: white;
+    button:hover {
+      transform: scale(1.05);
     }
 
-    #noBtn {
-      background: #ddd;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background: rgba(255,255,255,0.05);
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 6px;
+    }
+
+    .top {
+      background: gold;
+      color: black;
+      font-weight: bold;
+      box-shadow: 0 0 15px gold;
+    }
+
+    .red { color: red; }
+    .green { color: lime; }
+
+    tr {
       transition: all 0.3s ease;
-      position: absolute;
-    }
-
-    #reply {
-      margin-top: 20px;
-      font-size: 18px;
-      color: #ff4d6d;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="card">
-    <h1>Hi 💖</h1>
-    <p>You make my days brighter and my smile wider.</p>
-    <h2>Will you be my Valentine? 🌹</h2>
+<h1>🏏 BidBattle Auction Dashboard</h1>
 
-    <div class="buttons">
-      <button id="yesBtn" onclick="yes()">Yes 💕</button>
-      <button id="noBtn" onmouseover="moveButton()">No 🙈</button>
-    </div>
+<button onclick="addPlayer()">➕ Add Player</button>
 
-    <p id="reply"></p>
-  </div>
+<table id="table">
+<tr>
+<th>Team</th>
+<th>Player</th>
+<th>Role</th>
+<th>Price</th>
+<th>Rating</th>
+<th>Foreign</th>
+<th>Action</th>
+</tr>
+</table>
 
-  <script>
-    function yes() {
-      document.getElementById("reply").innerHTML =
-        "Yayyy!! 💖 I knew it 😍 Happy Valentine’s Day 🥰";
+<h2>📊 Summary</h2>
+
+<table id="summary">
+<tr>
+<th>Team</th>
+<th>Players</th>
+<th>Spent</th>
+<th>Remaining</th>
+<th>Rating</th>
+<th>Rank</th>
+<th>Status</th>
+</tr>
+</table>
+
+<script>
+
+let players = [];
+let budget = 90;
+
+function addPlayer() {
+  let row = document.getElementById("table").insertRow();
+
+  row.innerHTML = `
+    <td><input placeholder="Team"></td>
+    <td><input placeholder="Player"></td>
+    <td>
+      <select>
+        <option>Batter</option>
+        <option>Bowler</option>
+        <option>All-Rounder</option>
+        <option>Wicket Keeper</option>
+      </select>
+    </td>
+    <td><input type="number" min="0"></td>
+    <td><input type="number" min="0"></td>
+    <td>
+      <select><option>N</option><option>Y</option></select>
+    </td>
+    <td><button onclick="save(this)">Save</button></td>
+  `;
+}
+
+function save(btn) {
+  let row = btn.closest("tr");
+
+  let team = row.cells[0].children[0].value.trim();
+  let player = row.cells[1].children[0].value.trim();
+
+  if (!team || !player) {
+    alert("Enter Team & Player");
+    return;
+  }
+
+  let data = {
+    team,
+    player,
+    role: row.cells[2].children[0].value,
+    price: Number(row.cells[3].children[0].value) || 0,
+    rating: Number(row.cells[4].children[0].value) || 0,
+    foreign: row.cells[5].children[0].value
+  };
+
+  players.push(data);
+
+  btn.innerText = "✔ Saved";
+  btn.style.background = "limegreen";
+  btn.disabled = true;
+
+  // sound
+  new Audio("https://www.soundjay.com/buttons/sounds/button-09.mp3").play();
+
+  // animation
+  row.style.background = "#00ff8830";
+  setTimeout(()=>row.style.background="", 800);
+
+  updateSummary();
+}
+
+function updateSummary() {
+  let teams = {};
+
+  players.forEach(p => {
+    if (!teams[p.team]) {
+      teams[p.team] = {
+        players:0, spent:0, rating:0, roles:{}, foreign:0
+      };
     }
 
-    function moveButton() {
-      const btn = document.getElementById("noBtn");
+    let t = teams[p.team];
+    t.players++;
+    t.spent += p.price;
+    t.rating += p.rating;
 
-      const maxX = window.innerWidth - btn.offsetWidth;
-      const maxY = window.innerHeight - btn.offsetHeight;
+    if (p.foreign === "Y") t.foreign++;
 
-      const x = Math.random() * maxX;
-      const y = Math.random() * maxY;
+    t.roles[p.role] = (t.roles[p.role] || 0) + 1;
+  });
 
-      btn.style.left = x + "px";
-      btn.style.top = y + "px";
+  render(teams);
+}
+
+function render(teams) {
+  let table = document.getElementById("summary");
+
+  while (table.rows.length > 1) {
+    table.deleteRow(1);
+  }
+
+  let sorted = Object.entries(teams)
+    .sort((a,b)=>b[1].rating - a[1].rating);
+
+  sorted.forEach((t,i)=>{
+    let d = t[1];
+    let remaining = budget - d.spent;
+
+    let issues = [];
+
+    if ((d.roles["Batter"] || 0) < 3) issues.push("Bat<3");
+    if ((d.roles["Bowler"] || 0) < 3) issues.push("Bowl<3");
+    if ((d.roles["All-Rounder"] || 0) < 1) issues.push("No AR");
+    if ((d.roles["Wicket Keeper"] || 0) < 1) issues.push("No WK");
+    if (d.foreign > 4) issues.push("Foreign>4");
+
+    let valid = issues.length === 0;
+
+    let row = table.insertRow();
+
+    if (i === 0) {
+      row.classList.add("top");
     }
-  </script>
+
+    row.innerHTML = `
+      <td>${t[0]}</td>
+      <td>${d.players}</td>
+      <td>${d.spent}</td>
+      <td class="${remaining<10?'red':'green'}">${remaining}</td>
+      <td>${d.rating}</td>
+      <td>${i+1}</td>
+      <td class="${valid?'green':'red'}">
+        ${valid ? 'VALID' : issues.join(', ')}
+      </td>
+    `;
+  });
+}
+
+</script>
 
 </body>
 </html>
